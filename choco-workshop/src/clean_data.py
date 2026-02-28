@@ -12,8 +12,10 @@ df.columns = df.columns.str.lower().str.strip()
 df.columns = df.columns.str.replace(" ", "_")
 
 # Parse date column
-df["date"] = pandas.to_datetime(df["date"], errors="coerce")
-failed_date_conversion = df["date"].isna().sum()
+dates_before = df["date"]
+df["date"] = pandas.to_datetime(df["date"], dayfirst=True, errors="coerce")
+is_nat_mask = df["date"].isna()
+failed_original_dates = dates_before[is_nat_mask & dates_before.notna()]
 
 # Convert numeric columns
 df["amount"] = df["amount"].str.replace(",", "")
@@ -31,7 +33,7 @@ df = df.drop_duplicates(keep="first")
 # Print conclusions to terminal
 print(f'Initial number of rows: {initial_rows}')
 print(f'Final number or rows: {final_rows}')
-print(f'Failed date conversion: {failed_date_conversion}')
+print(f'Failed date conversion: {failed_original_dates}')
 print(f'Failed numeric conversion: {failed_numeric_conversion}')
 
 # Write clean data
