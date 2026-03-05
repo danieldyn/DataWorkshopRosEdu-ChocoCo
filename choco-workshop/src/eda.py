@@ -19,7 +19,7 @@ for column in df.columns:
 
 # Grouping
 revenue_by_country = df.groupby("country")["amount"].sum().sort_values(ascending=False)
-print("\n--- Total Revenue by Country ---")
+print("\nTotal Revenue by Country")
 print(revenue_by_country)
 
 revenue_by_product = df.groupby("product")["amount"].sum().sort_values(ascending=False)
@@ -37,7 +37,8 @@ revenue_by_month = df.groupby(df["date"].dt.to_period("M"))["amount"].sum().sort
 print("\nTotal Revenue by Month")
 print(revenue_by_month)
 
-# Plot revenue over time
+# Revenue over time
+plt.figure(figsize=(10, 6))
 x_dates = revenue_by_month.index.to_timestamp()
 y_revenue = revenue_by_month.values
 plt.plot(x_dates, y_revenue, marker='o', linestyle='-', color='g')
@@ -45,4 +46,27 @@ plt.title("Total Revenue by Month")
 plt.xlabel("Month")
 plt.ylabel("Revenue ($)")
 plt.xticks(rotation=45)
-plt.savefig(PLOT_PATH + "revenue_by_month")
+plt.tight_layout()
+plt.savefig(PLOT_PATH + "revenue_by_month.png")
+plt.close()
+
+# Top 10 products by revenue
+plt.figure(figsize=(10, 6))
+top_10_products = revenue_by_product.sort_values(ascending=True).head(10)
+top_10_products.plot(kind="barh", color="skyblue")
+plt.title("Top 10 Products by Revenue")
+plt.xlabel("Revenue ($)")
+plt.ylabel("Product")
+plt.tight_layout()
+plt.savefig(PLOT_PATH + "top_10_products.png")
+plt.close()
+
+# Boxes shipped vs revenue
+plt.figure(figsize=(8, 6))
+plt.scatter(df["boxes_shipped"], df["amount"], alpha=0.5, color="coral")
+plt.title("Boxes Shipped vs. Revenue")
+plt.xlabel("Boxes Shipped")
+plt.ylabel("Revenue ($)")
+plt.tight_layout()
+plt.savefig(PLOT_PATH + "boxes_vs_revenue.png")
+plt.close()
